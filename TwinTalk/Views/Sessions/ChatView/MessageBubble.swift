@@ -28,7 +28,7 @@ struct MessageBubble: View {
                     .foregroundColor(.gray)
             }
             
-            if message.sender == .AI {
+            if message.sender == .ai {
                 Spacer()
             }
         }

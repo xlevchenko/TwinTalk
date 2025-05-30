@@ -16,7 +16,8 @@ struct Session: Codable, Identifiable {
     var messages: [Message]
 }
 
-struct Message: Codable {
+struct Message: Codable, Identifiable, Hashable {
+    let id: String
     let text: String
     let sender: Sender
     let timestamp: String
@@ -24,5 +25,5 @@ struct Message: Codable {
 
 enum Sender: String, Codable {
     case user
-    case AI
+    case ai
 }

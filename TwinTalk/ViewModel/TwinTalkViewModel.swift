@@ -16,28 +16,31 @@ class TwinTalkViewModel: ObservableObject {
     @Published var isWebSocketConnected = false
     
     private var networkService = NetworkService.shared
+    private var persistenceManager = PersistenceManager.instance
     
     //MARK: - Uncomment if you what using Socket
-//    init() {
-//        setupWebSocket()
-//    }
-//
-//    deinit {
-//        networkService.disconnectWebSocket()
-//    }
-//
+    //    init() {
+    //        setupWebSocket()
+    //    }
+    //
+    //    deinit {
+    //        networkService.disconnectWebSocket()
+    //    }
+    //
     
     func loadSessions() async {
+        sessions = persistenceManager.loadStoredSessions()
+        
         do {
-            sessions = try await networkService.fetchSessions()
-            
-            //MARK: - Register message handlers for all sessions using Socket
-//            for session in sessions {
-//                registerMessageHandler(for: session.id)
-//            }
-            
+            let fetchedSessions = try await networkService.fetchSessions()
+            await MainActor.run {
+                self.sessions = fetchedSessions
+            }
+            persistenceManager.syncSessions(fetchedSessions)
         } catch {
-            errorMessage = "Failed to fetch sessions: \(error.localizedDescription)"
+            await MainActor.run {
+                self.errorMessage = "Failed to fetch sessions: \(error.localizedDescription)"
+            }
         }
     }
     
@@ -45,6 +48,7 @@ class TwinTalkViewModel: ObservableObject {
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         
         let newMessage = Message(
+            id: UUID().uuidString,
             text: text,
             sender: .user,
             timestamp: ISO8601DateFormatter().string(from: Date())
@@ -61,8 +65,9 @@ class TwinTalkViewModel: ObservableObject {
         try? await Task.sleep(nanoseconds: 1_000_000_000)
         
         let aiResponse = Message(
+            id: UUID().uuidString,
             text: "This is a simulated AI response. In a real app, this would come from the backend.",
-            sender: .AI,
+            sender: .ai,
             timestamp: ISO8601DateFormatter().string(from: Date())
         )
         
@@ -122,6 +127,7 @@ extension TwinTalkViewModel {
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         
         let newMessage = Message(
+            id: UUID().uuidString,
             text: text,
             sender: .user,
             timestamp: ISO8601DateFormatter().string(from: Date())

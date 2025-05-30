@@ -7,6 +7,7 @@
 
 
 import Foundation
+import CoreData
 
 final class NetworkService {
     
@@ -17,14 +18,14 @@ final class NetworkService {
     private let encoder: JSONEncoder
     
     private let baseURL = "https://run.mocky.io/v3"
-    private let sessionsEndpoint = "/83dc79dc-d16b-42a2-beda-05c7072a0937"
+    private let sessionsEndpoint = "/cd42a6b7-6dc3-4681-bb68-ab4b355a4928"
     private let messageEndpoint = "/your-post-mock-id"
     
     // WebSocket properties
     private let webSocketURL = "wss://your-websocket-server.com/ws"
     private var webSocketTask: URLSessionWebSocketTask?
     private var messageHandlers: [String: (Message) -> Void] = [:]
-    
+        
     private init() {
         // Configure URLSession with timeouts
         let config = URLSessionConfiguration.default
@@ -177,7 +178,7 @@ extension NetworkService {
             
             // Handle different message types
             switch webSocketResponse.type {
-            case .AI:
+            case .ai:
                 if let handler = messageHandlers[webSocketResponse.sessionId] {
                     DispatchQueue.main.async {
                         handler(webSocketResponse.message)

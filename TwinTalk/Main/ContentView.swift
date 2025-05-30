@@ -13,6 +13,7 @@ struct ContentView: View {
     
     var body: some View {
         TabBarView()
+            .environment(\.managedObjectContext, PersistenceManager.instance.context)
             .environmentObject(viewModel)
     }
 }

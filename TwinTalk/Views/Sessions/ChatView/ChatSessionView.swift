@@ -24,9 +24,9 @@ struct ChatSessionView: View {
                 ScrollViewReader { proxy in
                     ScrollView {
                         LazyVStack(spacing: 12) {
-                            ForEach(session.messages, id: \.timestamp) { message in
+                            ForEach(session.messages, id: \.id) { message in
                                 MessageBubble(message: message)
-                                    .id(message.timestamp)
+//                                    .id(message.timestamp)
                             }
                         }
                         .padding()
@@ -34,7 +34,7 @@ struct ChatSessionView: View {
                     .onChange(of: session.messages.count) { _ in
                         if let lastMessage = session.messages.last {
                             withAnimation {
-                                proxy.scrollTo(lastMessage.timestamp, anchor: .bottom)
+                                proxy.scrollTo(lastMessage.id, anchor: .bottom)
                             }
                         }
                     }
