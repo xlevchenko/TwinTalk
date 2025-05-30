@@ -26,7 +26,6 @@ struct ChatSessionView: View {
                         LazyVStack(spacing: 12) {
                             ForEach(session.messages, id: \.id) { message in
                                 MessageBubble(message: message)
-//                                    .id(message.timestamp)
                             }
                         }
                         .padding()
@@ -104,9 +103,6 @@ struct ChatSessionView: View {
         .navigationTitle(currentSession?.title ?? "Chat")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
-        .onDisappear {
-            viewModel.stopListening(to: sessionId)
-        }
     }
     
     private func sendMessage() {

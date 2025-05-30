@@ -6,11 +6,27 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		60BA02532DEA256400A346FE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 60C3A3992DE8E16200E255A8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 60C3A3A02DE8E16200E255A8;
+			remoteInfo = TwinTalk;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		60BA024F2DEA256400A346FE /* TwinTalkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TwinTalkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		60C3A3A12DE8E16200E255A8 /* TwinTalk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TwinTalk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		60BA02502DEA256400A346FE /* TwinTalkTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = TwinTalkTests;
+			sourceTree = "<group>";
+		};
 		60C3A3A32DE8E16200E255A8 /* TwinTalk */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = TwinTalk;
@@ -19,6 +35,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		60BA024C2DEA256400A346FE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		60C3A39E2DE8E16200E255A8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -33,6 +56,7 @@
 			isa = PBXGroup;
 			children = (
 				60C3A3A32DE8E16200E255A8 /* TwinTalk */,
+				60BA02502DEA256400A346FE /* TwinTalkTests */,
 				60C3A3A22DE8E16200E255A8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				60C3A3A12DE8E16200E255A8 /* TwinTalk.app */,
+				60BA024F2DEA256400A346FE /* TwinTalkTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,6 +73,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		60BA024E2DEA256400A346FE /* TwinTalkTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 60BA02552DEA256400A346FE /* Build configuration list for PBXNativeTarget "TwinTalkTests" */;
+			buildPhases = (
+				60BA024B2DEA256400A346FE /* Sources */,
+				60BA024C2DEA256400A346FE /* Frameworks */,
+				60BA024D2DEA256400A346FE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				60BA02542DEA256400A346FE /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				60BA02502DEA256400A346FE /* TwinTalkTests */,
+			);
+			name = TwinTalkTests;
+			packageProductDependencies = (
+			);
+			productName = TwinTalkTests;
+			productReference = 60BA024F2DEA256400A346FE /* TwinTalkTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		60C3A3A02DE8E16200E255A8 /* TwinTalk */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 60C3A3AC2DE8E16500E255A8 /* Build configuration list for PBXNativeTarget "TwinTalk" */;
@@ -80,6 +128,10 @@
 				LastSwiftUpdateCheck = 1630;
 				LastUpgradeCheck = 1630;
 				TargetAttributes = {
+					60BA024E2DEA256400A346FE = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 60C3A3A02DE8E16200E255A8;
+					};
 					60C3A3A02DE8E16200E255A8 = {
 						CreatedOnToolsVersion = 16.3;
 					};
@@ -100,11 +152,19 @@
 			projectRoot = "";
 			targets = (
 				60C3A3A02DE8E16200E255A8 /* TwinTalk */,
+				60BA024E2DEA256400A346FE /* TwinTalkTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		60BA024D2DEA256400A346FE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		60C3A39F2DE8E16200E255A8 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -115,6 +175,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		60BA024B2DEA256400A346FE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		60C3A39D2DE8E16200E255A8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -124,7 +191,51 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		60BA02542DEA256400A346FE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 60C3A3A02DE8E16200E255A8 /* TwinTalk */;
+			targetProxy = 60BA02532DEA256400A346FE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		60BA02562DEA256400A346FE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NG8TF397V4;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = twin.talk.app.co.TwinTalkTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TwinTalk.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TwinTalk";
+			};
+			name = Debug;
+		};
+		60BA02572DEA256400A346FE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NG8TF397V4;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = twin.talk.app.co.TwinTalkTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TwinTalk.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TwinTalk";
+			};
+			name = Release;
+		};
 		60C3A3AA2DE8E16500E255A8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -317,6 +428,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		60BA02552DEA256400A346FE /* Build configuration list for PBXNativeTarget "TwinTalkTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				60BA02562DEA256400A346FE /* Debug */,
+				60BA02572DEA256400A346FE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		60C3A39C2DE8E16200E255A8 /* Build configuration list for PBXProject "TwinTalk" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

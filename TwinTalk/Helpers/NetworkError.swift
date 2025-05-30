@@ -12,11 +12,10 @@ enum NetworkError: Error, LocalizedError {
     case noData
     case invalidResponse
     case serverError(Int)
-    case decodingError(Error)
-    case encodingError(Error)
     case networkUnavailable
     case timeout
-    case webSocketNotConnected
+    case decodingError(Error)
+    case encodingError(Error)
     case unknown(Error)
     
     var errorDescription: String? {
@@ -29,16 +28,14 @@ enum NetworkError: Error, LocalizedError {
             return "Invalid response"
         case .serverError(let code):
             return "Server error with code: \(code)"
-        case .decodingError(let error):
-            return "Decoding error: \(error.localizedDescription)"
-        case .encodingError(let error):
-            return "Encoding error: \(error.localizedDescription)"
         case .networkUnavailable:
             return "Network unavailable"
         case .timeout:
             return "Request timeout"
-        case .webSocketNotConnected:
-            return "WebSocket is not connected"
+        case .decodingError(let error):
+            return "Decoding error: \(error.localizedDescription)"
+        case .encodingError(let error):
+            return "Encoding error: \(error.localizedDescription)"
         case .unknown(let error):
             return "Unknown error: \(error.localizedDescription)"
         }
