@@ -40,9 +40,18 @@ class TwinTalkViewModel: ObservableObject {
             sessions[index] = updatedSession
         }
         
-        // TODO: In a real app, we would send this to the backend
-        // For now, we'll simulate an AI response after a short delay
-        try? await Task.sleep(nanoseconds: 1_000_000_000) // 1 second delay
+        // Optional: simulate sending message to backend (disabled for now)
+        /*
+        do {
+            try await networkService.sendMessage(newMessage, to: sessionId)
+        } catch {
+            errorMessage = "Failed to send message: \(error.localizedDescription)"
+            return
+        }
+        */
+
+        // Simulated AI response after 1 second
+        try? await Task.sleep(nanoseconds: 1_000_000_000)
         
         let aiResponse = Message(
             text: "This is a simulated AI response. In a real app, this would come from the backend.",
