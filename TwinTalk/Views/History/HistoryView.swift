@@ -10,18 +10,67 @@ import SwiftUI
 struct HistoryView: View {
     
     @EnvironmentObject var viewModel: TwinTalkViewModel
+    @Binding var selectedTab: Int
+    @State private var isRefreshing = false
     
     var body: some View {
         NavigationStack {
             ScrollView {
-                LazyVStack(spacing: 16) {
-                    ForEach(viewModel.sessions) { session in
-                        SessionCardView(session: session)
+                VStack(spacing: 16) {
+                    Button(action: {
+                        selectedTab = 1
+                    }) {
+                        HStack {
+                            Image(systemName: "plus.circle.fill")
+                                .font(.system(size: 20))
+                            Text("Start New Session")
+                                .font(.system(size: 16, weight: .semibold))
+                        }
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(
+                            LinearGradient(
+                                colors: [Color.blue, Color.blue.opacity(0.8)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .cornerRadius(12)
+                        .shadow(color: Color.blue.opacity(0.3), radius: 4, x: 0, y: 2)
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+                    
+                    LazyVStack(spacing: 16) {
+                        ForEach(viewModel.sessions) { session in
+                            SessionCardView(session: session)
+                        }
                     }
                 }
-                .padding(.top)
             }
             .navigationTitle("AI Sessions")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        Task {
+                            isRefreshing = true
+                            await viewModel.loadSessions()
+                            try? await Task.sleep(nanoseconds: 500_000_000)
+                            isRefreshing = false
+                        }
+                    }) {
+                        if isRefreshing {
+                            ProgressView()
+                                .tint(.blue)
+                        } else {
+                            Image(systemName: "arrow.clockwise")
+                                .font(.system(size: 16, weight: .semibold))
+                        }
+                    }
+                    .disabled(isRefreshing)
+                }
+            }
             .task {
                 await viewModel.loadSessions()
             }
@@ -33,7 +82,7 @@ struct SessionCardView: View {
     let session: Session
     
     var body: some View {
-        NavigationLink(destination: ChatView(sessionId: session.id)) {
+        NavigationLink(destination: ChatSessionView(sessionId: session.id)) {
             VStack(alignment: .leading, spacing: 8) {
                 Text(formattedDate(session.date))
                     .font(.caption)
@@ -76,5 +125,6 @@ struct SessionCardView: View {
 }
 
 #Preview {
-    HistoryView()
+    HistoryView(selectedTab: .constant(0))
+        .environmentObject(TwinTalkViewModel())
 }

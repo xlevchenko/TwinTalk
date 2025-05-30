@@ -8,17 +8,20 @@
 import SwiftUI
 
 struct TabBarView: View {
+    @State private var selectedTab = 0
+    
     var body: some View {
-        TabView {
-            HistoryView()
+        TabView(selection: $selectedTab) {
+            HistoryView(selectedTab: $selectedTab)
                 .tabItem {
-                    Label("History", systemImage: "clock")
+                    Label("All Sessions", systemImage: "clock")
                 }
-            
-            NewChatView()
+                .tag(0)
+            CreateSession()
                 .tabItem {
-                    Label("Chat", systemImage: "message")
+                    Label("New Session", systemImage: "message")
                 }
+                .tag(1)
         }
     }
 }

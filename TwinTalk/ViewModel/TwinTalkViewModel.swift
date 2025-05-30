@@ -72,6 +72,24 @@ class TwinTalkViewModel: ObservableObject {
             sessions[index] = updatedSession
         }
     }
+    
+    func createNewSession(title: String, category: String) async throws -> Session {
+        let newSession = Session(
+            id: UUID().uuidString,
+            date: ISO8601DateFormatter().string(from: Date()),
+            title: title,
+            category: category,
+            summary: "New session about \(title)",
+            messages: []
+        )
+        
+        // Add the new session to the local state
+        sessions.append(newSession)
+        
+        // Here you would typically make an API call to create the session on the backend
+        // For now, we'll just return the local session
+        return newSession
+    }
 }
 
 

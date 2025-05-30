@@ -194,7 +194,7 @@ extension NetworkService {
     
 }
 
-// MARK: - Private Extensions (unchanged)
+// MARK: - Private Extensions
 private extension NetworkService {
     
     func validateResponse(_ response: URLResponse) throws {
