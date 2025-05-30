@@ -104,6 +104,9 @@ struct ChatView: View {
         .navigationTitle(currentSession?.title ?? "Chat")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
+        .onDisappear {
+            viewModel.stopListening(to: sessionId)
+        }
     }
     
     private func sendMessage() {

@@ -5,6 +5,7 @@
 //  Created by Olexsii Levchenko on 29.05.2025.
 //
 
+
 import Foundation
 
 final class NetworkService {
@@ -18,6 +19,11 @@ final class NetworkService {
     private let baseURL = "https://run.mocky.io/v3"
     private let sessionsEndpoint = "/83dc79dc-d16b-42a2-beda-05c7072a0937"
     private let messageEndpoint = "/your-post-mock-id"
+    
+    // WebSocket properties
+    private let webSocketURL = "wss://your-websocket-server.com/ws"
+    private var webSocketTask: URLSessionWebSocketTask?
+    private var messageHandlers: [String: (Message) -> Void] = [:]
     
     private init() {
         // Configure URLSession with timeouts
@@ -37,11 +43,8 @@ final class NetworkService {
         encoder.dateEncodingStrategy = .iso8601
     }
     
-    // MARK: - Public Methods
+    // MARK: - Original HTTP Methods for imitation of receiving data and sending messages
     
-    /// Fetches a list of sessions from the server
-    /// - Returns: An array of sessions
-    /// - Throws: NetworkError in case of failure
     func fetchSessions() async throws -> [Session] {
         let urlString = baseURL + sessionsEndpoint
         
@@ -71,43 +74,129 @@ final class NetworkService {
             throw NetworkError.unknown(error)
         }
     }
-    
-    /// Sends a message to a specific session
-    /// - Parameters:
-    ///   - message: The message to be sent
-    ///   - sessionId: Identifier of the target session
-    /// - Throws: NetworkError in case of failure
-    func sendMessage(_ message: Message, to sessionId: String) async throws {
-        let urlString = baseURL + messageEndpoint
-        
-        guard let url = URL(string: urlString) else {
-            throw NetworkError.invalidURL
-        }
-        
-        do {
-            let payload = SendMessagePayload(sessionId: sessionId, message: message)
-            let request = try createPostRequest(url: url, payload: payload)
-            
-            let (_, response) = try await session.data(for: request)
-            try validateResponse(response)
-        } catch let error as NetworkError {
-            throw error
-        } catch let encodingError as EncodingError {
-            throw NetworkError.encodingError(encodingError)
-        } catch let urlError as URLError {
-            throw mapURLError(urlError)
-        } catch {
-            throw NetworkError.unknown(error)
-        }
-    }
 }
 
-// MARK: - Private Extensions
+// MARK: - WebSocket Methods
+extension NetworkService {
+    /// Establishes WebSocket connection
+    func connectWebSocket() {
+        guard let url = URL(string: webSocketURL) else {
+            print("Invalid WebSocket URL")
+            return
+        }
+        
+        webSocketTask = session.webSocketTask(with: url)
+        webSocketTask?.resume()
+        
+        // Start listening for messages
+        listenForMessages()
+    }
+    
+    /// Disconnects WebSocket
+    func disconnectWebSocket() {
+        webSocketTask?.cancel(with: .goingAway, reason: nil)
+        webSocketTask = nil
+        messageHandlers.removeAll()
+    }
+    
+    /// Registers a handler for receiving AI responses for a specific session
+    /// - Parameters:
+    ///   - sessionId: The session ID to listen for
+    ///   - handler: Callback function to handle received messages
+    func registerMessageHandler(for sessionId: String, handler: @escaping (Message) -> Void) {
+        messageHandlers[sessionId] = handler
+    }
+    
+    /// Removes message handler for a session
+    /// - Parameter sessionId: The session ID to stop listening for
+    func removeMessageHandler(for sessionId: String) {
+        messageHandlers.removeValue(forKey: sessionId)
+    }
+    
+    /// Sends a message through WebSocket and waits for AI response
+    /// - Parameters:
+    ///   - message: The message to send
+    ///   - sessionId: The session ID
+    func sendMessageViaWebSocket(_ message: Message, to sessionId: String) async throws {
+        guard let webSocketTask = webSocketTask else {
+            throw NetworkError.webSocketNotConnected
+        }
+        
+        let payload = WebSocketMessage(
+            type: .user,
+            sessionId: sessionId,
+            message: message
+        )
+        
+        let jsonData = try encoder.encode(payload)
+        let messageString = String(data: jsonData, encoding: .utf8) ?? ""
+        
+        try await webSocketTask.send(.string(messageString))
+    }
+    
+    // MARK: - Private WebSocket Methods
+    
+    private func listenForMessages() {
+        guard let webSocketTask = webSocketTask else { return }
+        
+        webSocketTask.receive { [weak self] result in
+            switch result {
+            case .success(let message):
+                self?.handleWebSocketMessage(message)
+                // Continue listening
+                self?.listenForMessages()
+                
+            case .failure(let error):
+                print("WebSocket receive error: \(error)")
+                // Attempt to reconnect after a delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    self?.connectWebSocket()
+                }
+            }
+        }
+    }
+    
+    private func handleWebSocketMessage(_ message: URLSessionWebSocketTask.Message) {
+        switch message {
+        case .string(let text):
+            handleTextMessage(text)
+        case .data(let data):
+            if let text = String(data: data, encoding: .utf8) {
+                handleTextMessage(text)
+            }
+        @unknown default:
+            break
+        }
+    }
+    
+    private func handleTextMessage(_ text: String) {
+        guard let data = text.data(using: .utf8) else { return }
+        
+        do {
+            let webSocketResponse = try decoder.decode(WebSocketResponse.self, from: data)
+            
+            // Handle different message types
+            switch webSocketResponse.type {
+            case .AI:
+                if let handler = messageHandlers[webSocketResponse.sessionId] {
+                    DispatchQueue.main.async {
+                        handler(webSocketResponse.message)
+                    }
+                }
+            default:
+                break
+            }
+            
+        } catch {
+            print("Failed to decode WebSocket message: \(error)")
+        }
+    }
+    
+}
+
+// MARK: - Private Extensions (unchanged)
 private extension NetworkService {
     
-    /// Validates an HTTP response
-    /// - Parameter response: The URLResponse to validate
-    /// - Throws: NetworkError if the response is invalid
     func validateResponse(_ response: URLResponse) throws {
         guard let httpResponse = response as? HTTPURLResponse else {
             throw NetworkError.invalidResponse
@@ -123,12 +212,6 @@ private extension NetworkService {
         }
     }
     
-    /// Creates a POST request with a JSON payload
-    /// - Parameters:
-    ///   - url: The request URL
-    ///   - payload: The data to send
-    /// - Returns: A configured URLRequest
-    /// - Throws: NetworkError if encoding fails
     func createPostRequest<T: Encodable>(url: URL, payload: T) throws -> URLRequest {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -144,9 +227,6 @@ private extension NetworkService {
         return request
     }
     
-    /// Maps URLError to a corresponding NetworkError
-    /// - Parameter urlError: The URLError to map
-    /// - Returns: A matching NetworkError
     func mapURLError(_ urlError: URLError) -> NetworkError {
         switch urlError.code {
         case .notConnectedToInternet, .networkConnectionLost:
